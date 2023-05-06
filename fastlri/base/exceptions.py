@@ -1,2 +1,2 @@
 class InvalidProduction(Exception):
-	pass
+    pass
