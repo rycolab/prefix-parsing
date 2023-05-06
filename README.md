@@ -10,6 +10,8 @@ The methods can be found under src/parsing/parser.py implement:
 
 To start, run:
 ```bash
+$ git clone git@github.com:franznowak/prefix-parsing.git
+$ cd prefix-parsing
 $ pip install -e .
 ```
 To unit test, run:
