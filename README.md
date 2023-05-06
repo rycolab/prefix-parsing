@@ -66,6 +66,7 @@ cfg.add(1, Adv, like)
 
 print(cfg)
 ```
+```
 N → fruit	0.5
 N → flies	0.25
 N → banana	0.25
@@ -81,42 +82,54 @@ Adj → green	1.0
 Adv → like	1.0
 Det → a		1.0
 AdvP → Adv NP	1.0
+```
 
 Then, call the parser on an example input:
 ```python
 parser.cky("fruit flies like a green banana")
 ```
+```
 0.000244140625
+```
 
 Similarly for lri and fast lri:
 ```python
 parser.lri("fruit flies like a green banana")
 ```
+```
 0.000244140625
+```
 
 ```python
 parser.lri_fast("fruit flies like a green banana")
 ```
+```
 0.000244140625
+```
 
 For a prefix that has no rooted parse tree under the CFG, cky will return 0, while lri returns a positive probability:
 
 ```python
 parser.cky("fruit flies like")
 ```
+```
 0.0
+```
 
 ```python
 parser.lri_fast("fruit flies like")
 ```
+```
 0.015625
+```
 
 It is also possible to get the full dynamic programming chart by setting a flag:
 
 ```python
 parser.lri_fast("fruit flies", chart=True)
 ```
-defaultdict(\<function fastlri.parsing.parser.Parser.lri_fast.\<locals\>.\<lambda>()\>,
+```
+defaultdict(<function fastlri.parsing.parser.Parser.lri_fast.<locals>.<lambda>()>,
             {(N, 0, 1): 0.5,
              (N, 1, 2): 0.25,
              (Adv, 0, 1): 0.0,
@@ -144,3 +157,4 @@ defaultdict(\<function fastlri.parsing.parser.Parser.lri_fast.\<locals\>.\<lambd
              (AdvP, 0, 2): 0.0,
              (Adj, 0, 2): 0.0,
              (V, 0, 2): 0.0})
+```
