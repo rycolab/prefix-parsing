@@ -20,19 +20,19 @@ class Parser:
 
             # terminal productions
             for (head, body), w in self.cfg.terminal:
-                for i in range(N):
-                    if body[0] == input[i]:
-                        β[head, i, i+1] += w
+                for k in range(N):
+                    if body[0] == input[k]:
+                        β[head, k, k] += w
 
             # binary productions
-            for l in range(1, N+2):
+            for l in range(2, N+1):
                 for i in range(N-l+1):
-                    k = i + l
-                    for j in range(i+1, k):
+                    k = i + l - 1
+                    for j in range(i, k):
                         for p, w in self.cfg.binary:
                             X, Y, Z = p.head, p.body[0], p.body[1]
-                            β[X, i, k] += β[Y, i, j] * β[Z, j, k] * w
-            return β if chart else β[S, 0, N]
+                            β[X, i, k] += β[Y, i, j] * β[Z, j+1, k] * w
+            return β if chart else β[S, 1, N]
     
     def cky_fast(self, input, chart=False):
         """A faster version of CKY  for dense grammars."""
@@ -53,22 +53,22 @@ class Parser:
 
         # terminal productions
         for (head, body), w in self.cfg.terminal:
-            for i in range(N):
-                if body[0] == input[i]:
-                    β[head, i, i+1] += w
+            for k in range(N):
+                if body[0] == input[k]:
+                    β[head, k, k] += w
 
         # binary productions
-        for span in range(2, N+1):
-            for i in range(N-span+1):
-                k = i + span
+        for l in range(2, N+1):
+            for i in range(N-l+1):
+                k = i + l - 1
                 for Y in self.cfg.V:
                     for Z in self.cfg.V:
                         γ = 0.0
-                        for j in range(i+1, k):
-                            γ += β[Y, i, j] * β[Z, j, k]
+                        for j in range(i, k):
+                            γ += β[Y, i, j] * β[Z, j+1, k]
                         for X in self.cfg.V:
                             β[X, i, k] += γ * W[X, Y, Z]
-        return β if chart else β[S, 0, N]
+        return β if chart else β[S, 1, N]
 
     def plc(self):
         """Computes the left-corner expectations. Requires CNF."""
@@ -113,30 +113,30 @@ class Parser:
         # precompute E2
         E2 = dd(lambda: 0.0)
         for X in self.cfg.V:
-            for p, w in self.cfg.binary:
-                Y2, Y, Z = p.head, p.body[0], p.body[1]
+            for (head, body), w in self.cfg.binary:
+                Y2, Y, Z = head, body[0], body[1]
                 E2[X, Y, Z] += E[X, Y2] * self.cfg._P[Production(Y2, (Y, Z))]
 
         # compute base case
         for X in self.cfg.V:
             for i in range(N):
-                for p, w in self.cfg.terminal:
-                    Y, v = p.head, p.body[0]
+                for (head, body), w in self.cfg.terminal:
+                    Y, v = head, body[0]
                     if v == input[i]:
-                        ppre[X, i, i+1] += E[X,Y] * w
+                        ppre[X, i, i] += E[X, Y] * w
 
         # compute prefix probability
-        for l in range(1, N+2):
-            for i in range(N - l + 1):
-                k = i + l
-                for j in range(i+1, k):
+        for l in range(2, N+1):
+            for i in range(N-l+1):
+                k = i + l - 1
+                for j in range(i, k):
                     for X in self.cfg.V:
                         for Y in self.cfg.V:
                             for Z in self.cfg.V:
                                 ppre[X, i, k] += E2[X, Y, Z] * β[Y, i, j] \
-                                    * ppre[Z, j, k]
+                                    * ppre[Z, j+1, k]
         
-        return ppre if chart else ppre[S, 0, N]
+        return ppre if chart else ppre[S, 1, N]
     
     def lri_fast(self, input, chart=False):
         """Faster prefix parsing algorithm by Nowak and Cotterell (2023)."""
@@ -179,15 +179,15 @@ class Parser:
                 for p, w in self.cfg.terminal:
                     Y, v = p.head, p.body[0]
                     if v == input[i]:
-                        ppre[X, i, i+1] += E[X, Y] * w
+                        ppre[X, i, i] += E[X, Y] * w
 
         # compute prefix probability
-        for l in range(1, N+2):
-            for i in range(N - l + 1):
-                k = i + l
-                for j in range(i+1, k):
+        for l in range(2, N+1):
+            for i in range(N-l+1):
+                k = i + l - 1
+                for j in range(i, k):
                     for X in self.cfg.V:
                         for Z in self.cfg.V:
-                            ppre[X, i, k] += δ[i, j, X, Z] * ppre[Z, j, k]
+                            ppre[X, i, k] += δ[i, j, X, Z] * ppre[Z, j+1, k]
         
-        return ppre if chart else ppre[S, 0, N]
+        return ppre if chart else ppre[S, 1, N]
