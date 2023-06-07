@@ -96,7 +96,12 @@ Det → a		1.0
 AdvP → Adv NP	1.0
 ```
 
-Then, call the parser on an example input:
+Then, create a parser for this CFG:
+```python
+parser = Parser(cfg)
+```
+
+Now you can parse input strings using CKY:
 ```python
 parser.cky("fruit flies like a green banana")
 ```

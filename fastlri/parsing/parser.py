@@ -32,7 +32,7 @@ class Parser:
                         for p, w in self.cfg.binary:
                             X, Y, Z = p.head, p.body[0], p.body[1]
                             β[X, i, k] += β[Y, i, j] * β[Z, j+1, k] * w
-            return β if chart else β[S, 1, N]
+            return β if chart else β[S, 0, N-1]
     
     def cky_fast(self, input, chart=False):
         """A faster version of CKY  for dense grammars."""
@@ -68,7 +68,7 @@ class Parser:
                             γ += β[Y, i, j] * β[Z, j+1, k]
                         for X in self.cfg.V:
                             β[X, i, k] += γ * W[X, Y, Z]
-        return β if chart else β[S, 1, N]
+        return β if chart else β[S, 0, N-1]
 
     def plc(self):
         """Computes the left-corner expectations. Requires CNF."""
@@ -136,7 +136,7 @@ class Parser:
                                 ppre[X, i, k] += E2[X, Y, Z] * β[Y, i, j] \
                                     * ppre[Z, j+1, k]
         
-        return ppre if chart else ppre[S, 1, N]
+        return ppre if chart else ppre[S, 0, N-1]
     
     def lri_fast(self, input, chart=False):
         """Faster prefix parsing algorithm by Nowak and Cotterell (2023)."""
@@ -190,4 +190,4 @@ class Parser:
                         for Z in self.cfg.V:
                             ppre[X, i, k] += δ[i, j, X, Z] * ppre[Z, j+1, k]
         
-        return ppre if chart else ppre[S, 1, N]
+        return ppre if chart else ppre[S, 0, N-1]
