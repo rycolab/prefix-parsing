@@ -1,13 +1,24 @@
 # prefix-parsing
 
-This repository contains implementations for parsing weighted context free grammars (WCFGs). 
+Code accompanying the ACL 2023 publication "[A Fast Algorithm for Computing Prefix Probabilities](https://arxiv.org/abs/2306.02303)".
 
-The methods can be found under src/parsing/parser.py implement:
-- The CKY algorithm (Kasami, 1965; Younger,
-1967; Cocke, 1969) for parsing a string under a WCFG;
-- The LRI algorithm  (Jelinek and Lafferty, 1991) for finding the weight of a prefix string under a WCFG;
-- An improved version of the LRI algorithm (Nowak and Cotterell, 2023) using additional memoization.
+This repository contains implementations for parsing weighted context free grammars (WCFGs) in chomsky normal form (CNF). 
 
+A context-free grammar is in CNF if the all the rules are in one of the following forms:
+```
+S -> ε
+X -> Y Z
+X -> a
+``` 
+Where S is the distinguished start non-terminal, X, Y, and Z are non-terminals, and a is a terminal.
+
+The methods can be found under `src/parsing/parser.py` implement:
+- The CKY algorithm ([Kasami, 1965](https://www.ideals.illinois.edu/items/100444); [Younger,
+1967](https://doi.org/https://doi.org/10.1016/S0019-9958(67)80007-X); [Cocke and Schwartz, 1969](https://www.softwarepreservation.org/projects/FORTRAN/CockeSchwartz_ProgLangCompilers.pdf)) for parsing a string under a WCFG in CNF;
+- The LRI algorithm  ([Jelinek and Lafferty, 1991](https://aclanthology.org/J91-3004)) for finding the weight of a prefix string under a WCFG in CNF;
+- An improved version of the LRI algorithm ([Nowak and Cotterell, 2023](https://arxiv.org/abs/2306.02303)) using additional memoization.
+
+---
 To start, run:
 ```bash
 $ git clone git@github.com:franznowak/prefix-parsing.git
@@ -18,6 +29,7 @@ To unit test, run:
 ```
 pytest .
 ```
+---
 
 ## Example usage
 First, define a weighted context free grammar as follows:
@@ -158,3 +170,27 @@ defaultdict(<function fastlri.parsing.parser.Parser.lri_fast.<locals>.<lambda>()
              (Adj, 0, 2): 0.0,
              (V, 0, 2): 0.0})
 ```
+
+---
+## Cite 
+
+If you use this code or the underlying algorithm in your own work, please cite our publication as follows:
+
+Franz Nowak and Ryan Cotterell. 2023. A Fast Algorithm for Computing Prefix Probabilities. In _Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (ACL)_, Toronto, Canada.
+
+```
+@inproceedings{nowak-cotterell-2023, 
+    author={Franz Nowak and Ryan Cotterell},
+    title={A Fast Algorithm for Computing Prefix Probabilities},
+    booktitle={Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (ACL)},
+    url={https://arxiv.org/abs/2306.02303},
+    address={Toronto, Canada},
+    year={2023}
+}
+```
+
+
+
+## Contact
+
+For any questions or problems, please file an [issue](https://github.com/rycolab/prefix-parsing/issues) or email [fnowak@ethz.ch](mailto:fnowak@ethz.ch).
