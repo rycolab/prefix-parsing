@@ -9,7 +9,9 @@ class Parser:
         self.cfg = cfg
     
     def cky(self, input, chart=False):
-            """Calculates the chart of substring probabilities using CKY."""
+            """Calculates the chart of substring probabilities using CKY. Requires CNF."""
+            assert self.cfg.in_cnf
+
             # convert input string to list
             if type(input) == str:
                 input = [Sym(token) for token in input.split()]
@@ -35,7 +37,8 @@ class Parser:
             return β if chart else β[S, 0, N-1]
     
     def cky_fast(self, input, chart=False):
-        """A faster version of CKY  for dense grammars."""
+        """A faster version of CKY  for dense grammars. Requires CNF."""
+        assert self.cfg.in_cnf
 
         # convert input string to list
         if type(input) == str:
@@ -89,7 +92,9 @@ class Parser:
         return P_L
     
     def lri(self, input, chart=False):
-        """Original LRI algorithm by Jelinek and Lafferty (1991)."""
+        """Original LRI algorithm by Jelinek and Lafferty (1991). Requires CNF."""
+        assert self.cfg.in_cnf
+
         # convert input string to list
         if type(input) == str:
             input = [Sym(token) for token in input.split()]
@@ -139,7 +144,9 @@ class Parser:
         return ppre if chart else ppre[S, 0, N-1]
     
     def lri_fast(self, input, chart=False):
-        """Faster prefix parsing algorithm by Nowak and Cotterell (2023)."""
+        """Faster prefix parsing algorithm by Nowak and Cotterell (2023). Requires CNF."""
+        assert self.cfg.in_cnf
+        
         # convert input string to list
         if type(input) == str:
             input = [Sym(token) for token in input.split()]
