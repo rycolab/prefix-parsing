@@ -1,6 +1,6 @@
 # prefix-parsing
 
-Code accompanying the ACL 2023 publication "[A Fast Algorithm for Computing Prefix Probabilities](https://arxiv.org/abs/2306.02303)".
+Code accompanying the ACL 2023 publication "[A Fast Algorithm for Computing Prefix Probabilities](https://aclanthology.org/2023.acl-short.6/)".
 
 This repository contains implementations for parsing weighted context free grammars (WCFGs) in chomsky normal form (CNF). 
 
@@ -75,25 +75,27 @@ cfg.add(0.5, V, like)
 cfg.add(1, Det, a)
 cfg.add(1, Adj, green)
 cfg.add(1, Adv, like)
+```
 
-print(cfg)
+Alternatively, grammars can more easily be defined directly from strings, where non-terminals need to be capitalized or start with an '@', whereas terminals are lower case:
 ```
-```
-N → fruit	0.5
-N → flies	0.25
-N → banana	0.25
-S → NP VP	1.0
-V → like	0.5
-V → flies	0.5
-NP → N N	0.25
-NP → Det N	0.25
-NP → Adj N	0.25
-NP → Det NP	0.25
-VP → V NP	1.0
-Adj → green	1.0
-Adv → like	1.0
-Det → a		1.0
-AdvP → Adv NP	1.0
+cfg = CFG.from_string("""
+1.0: S -> NP VP 
+0.5: N -> fruit	
+0.25: N -> flies	
+0.25: N -> banana	
+0.5: V -> like	
+0.5: V -> flies	
+0.25: NP -> N N	
+0.25: NP -> Det N	
+0.25: NP -> Adj N	
+0.25: NP -> Det NP	
+1.0: VP -> V NP	
+1.0: Adj -> green	
+1.0: Adv -> like	
+1.0: Det -> a		
+1.0: AdvP -> Adv NP	
+""", start = 'S')
 ```
 
 Then, create a parser for this CFG:
@@ -181,16 +183,25 @@ defaultdict(<function fastlri.parsing.parser.Parser.lri_fast.<locals>.<lambda>()
 
 If you use this code or the underlying algorithm in your own work, please cite our publication as follows:
 
-Franz Nowak and Ryan Cotterell. 2023. A Fast Algorithm for Computing Prefix Probabilities. In _Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (ACL)_, Toronto, Canada.
+Franz Nowak and Ryan Cotterell. 2023. A Fast Algorithm for Computing Prefix Probabilities. In _Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)_, pages 57–69, Toronto, Canada. Association for Computational Linguistics.
 
 ```
-@inproceedings{nowak-cotterell-2023, 
-    author={Franz Nowak and Ryan Cotterell},
-    title={A Fast Algorithm for Computing Prefix Probabilities},
-    booktitle={Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (ACL)},
-    url={https://arxiv.org/abs/2306.02303},
-    address={Toronto, Canada},
-    year={2023}
+@inproceedings{nowak-cotterell-2023-fast,
+    title = "A Fast Algorithm for Computing Prefix Probabilities",
+    author = "Nowak, Franz  and
+      Cotterell, Ryan",
+    editor = "Rogers, Anna  and
+      Boyd-Graber, Jordan  and
+      Okazaki, Naoaki",
+    booktitle = "Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)",
+    month = jul,
+    year = "2023",
+    address = "Toronto, Canada",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.acl-short.6",
+    doi = "10.18653/v1/2023.acl-short.6",
+    pages = "57--69",
+    abstract = "Multiple algorithms are known for efficiently calculating the prefix probability of a string under a probabilistic context-free grammar (PCFG). Good algorithms for the problem have a runtime cubic in the length of the input string. However, some proposed algorithms are suboptimal with respect to the size of the grammar. This paper proposes a new speed-up of Jelinek and Lafferty{'}s (1991) algorithm, which runs in $O(n^3|N|^3 + |N|^4)$, where n is the input length and |N| is the number of non-terminals in the grammar. In contrast, our speed-up runs in $O(n^2|N|^3 + n^3|N|^2)$.",
 }
 ```
 

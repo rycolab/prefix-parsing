@@ -66,40 +66,48 @@ class TestLri:
     def test_cky(self):
         parser = Parser(get_complex_cfg())
         pins = parser.cky("fruit flies", chart=True)
-        assert pins[(NT("N"), 0, 0)] == 0.5
-        assert pins[(NT("N"), 1, 1)] == 0.25
-        assert pins[(NT("NP"), 0, 1)] == 0.03125
+        assert pins[(0, NT("N"), 1)] == 0.5
+        assert pins[(1, NT("N"), 2)] == 0.25
+        assert pins[(0, NT("NP"), 2)] == 0.03125
 
     def test_cky_fast(self):
         parser = Parser(get_complex_cfg())
         pins = parser.cky_fast("fruit flies", chart=True)
-        assert pins[(NT("N"), 0, 0)] == 0.5
-        assert pins[(NT("N"), 1, 1)] == 0.25
-        assert pins[(NT("NP"), 0, 1)] == 0.03125
+        assert pins[(0, NT("N"), 1)] == 0.5
+        assert pins[(1, NT("N"), 2)] == 0.25
+        assert pins[(0, NT("NP"), 2)] == 0.03125
 
     
     def test_lri(self):
         parser = Parser(get_simple_cfg())
         ppre = parser.lri("a a a", chart=True)
-        assert ppre[(parser.cfg.S, 0, 0)] == 1.0
-        assert ppre[(parser.cfg.S, 0, 1)] == 1.0
-        assert ppre[(parser.cfg.S, 0, 2)] == 0.5
+        assert ppre[(0, parser.cfg.S, 0)] == 1.0
+        assert ppre[(1, parser.cfg.S, 1)] == 1.0
+        assert ppre[(0, parser.cfg.S, 1)] == 1.0
+        assert ppre[(0, parser.cfg.S, 2)] == 1.0
+        assert ppre[(0, parser.cfg.S, 3)] == 0.5
 
         parser = Parser(get_complex_cfg())
         ppre = parser.lri("fruit flies", chart=True)
-        assert ppre[(parser.cfg.S, 0, 0)] == 0.125
-        assert ppre[(parser.cfg.S, 1, 1)] == 0.0625
-        assert ppre[(parser.cfg.S, 0, 1)] == 0.03125
+        assert ppre[(0, parser.cfg.S, 0)] == 1.0
+        assert ppre[(1, parser.cfg.S, 1)] == 1.0
+        assert ppre[(0, parser.cfg.S, 1)] == 0.125
+        assert ppre[(1, parser.cfg.S, 2)] == 0.0625
+        assert ppre[(0, parser.cfg.S, 2)] == 0.03125
 
     def test_lri_fast(self):
         parser = Parser(get_simple_cfg())
         ppre = parser.lri_fast("a a a", chart=True)
-        assert ppre[(parser.cfg.S, 0, 0)] == 1.0
-        assert ppre[(parser.cfg.S, 0, 1)] == 1.0
-        assert ppre[(parser.cfg.S, 0, 2)] == 0.5
+        assert ppre[(0, parser.cfg.S, 0)] == 1.0
+        assert ppre[(1, parser.cfg.S, 1)] == 1.0
+        assert ppre[(0, parser.cfg.S, 1)] == 1.0
+        assert ppre[(0, parser.cfg.S, 2)] == 1.0
+        assert ppre[(0, parser.cfg.S, 3)] == 0.5
 
         parser = Parser(get_complex_cfg())
         ppre = parser.lri_fast("fruit flies", chart=True)
-        assert ppre[(parser.cfg.S, 0, 0)] == 0.125
-        assert ppre[(parser.cfg.S, 1, 1)] == 0.0625
-        assert ppre[(parser.cfg.S, 0, 1)] == 0.03125
+        assert ppre[(0, parser.cfg.S, 0)] == 1.0
+        assert ppre[(1, parser.cfg.S, 1)] == 1.0
+        assert ppre[(0, parser.cfg.S, 1)] == 0.125
+        assert ppre[(1, parser.cfg.S, 2)] == 0.0625
+        assert ppre[(0, parser.cfg.S, 2)] == 0.03125

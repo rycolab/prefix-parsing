@@ -1,23 +1,23 @@
 from collections import defaultdict as dd
 from fastlri.base.nonterminal import NT, S
-from fastlri.base.symbol import Sym, ε
+from fastlri.base.symbol import Sym
 from fastlri.base.production import Production
 from fastlri.base.exceptions import InvalidProduction
 
 class CFG:
 
-    def __init__(self):
+    def __init__(self, _S = S):
         # alphabet of terminal symbols Σ
         self.Sigma = set([])
 
         # non-terminal symbols V
-        self.V = set([S])
+        self.V = set([_S])
 
         # production rules of the form V × (Σ ∪ V)* × R
         self._P = dd(lambda: 0.0)
 
         # unique start non-terminal symbol S
-        self.S = S
+        self.S = _S
 
     @property
     def P(self):
@@ -53,18 +53,29 @@ class CFG:
         """Checks if grammar is in CNF."""
         for p, w in self.P:
             (head, body) = p
-            if head == self.S and len(body) == 1 and body[0] == ε:
+            if head == self.S and body == ():
                 # S → ε
                 continue
             elif head in self.V and len(body) == 2 and all([elem in self.V \
                     and elem != self.S for elem in body]):
                 # A → B C
                 continue
-            elif head in self.V and len(body) == 1 and body[0] in self.Sigma \
-                  and body[0] != ε:
+            elif head in self.V and len(body) == 1 and body[0] in self.Sigma:
                 # A → a
                 continue
             else:
+                return False
+        return True
+    
+    @property
+    def is_pcfg(self) -> bool:
+        """Returns whether the grammar is locally normalized."""
+        for head in self.V:
+            total = 0
+            for p, w in self.P:
+                if p.head == head:
+                    total += w
+            if total != 1:
                 return False
         return True
     
@@ -78,14 +89,40 @@ class CFG:
         for elem in body:
             if isinstance(elem, NT):
                 self.V.add(elem)
-            elif isinstance(elem, Sym) and elem != ε:
+            elif isinstance(elem, Sym):
                 self.Sigma.add(elem)
-            elif elem != ε:
+            elif elem != ():
                 raise InvalidProduction
 
         self._P[Production(head, body)] += w
     
+    @staticmethod
+    def from_string(string, comment="#", start='S'):
+        import re
+        if isinstance(start, str): start = NT(start)
+        cfg = CFG(_S = start)
+        string = string.replace('->', '→')   # synonym for the arrow
+        for line in string.split('\n'):
+            line = line.strip()
+            if not line or line.startswith(comment): continue
+            try:
+                [(w, lhs, rhs)] = re.findall('(.*):\s*(\S+)\s*→\s*(.*)$', line)
+                lhs = lhs.strip()
+                rhs = rhs.strip().split()
+
+                rhs_ = []
+                for x in rhs:
+                    if x[0].isupper() or x[0].startswith('@'):
+                        rhs_.append(NT(x))
+                    else:
+                        rhs_.append(Sym(x))
+                cfg.add(float(w), NT(lhs), *rhs_)
+
+            except ValueError as e:
+                raise ValueError(f'bad input line:\n{line}')
+        return cfg
+
     def __str__(self):
-        return "\n".join(f"{p}\t{w}" for (p, w) in sorted(self.P, \
+        return "\n".join(f"{w}: \t {p}" for (p, w) in sorted(self.P, \
             key=lambda x: (len(str(x[0].head)), str(x[0].head), \
             len(str(x[0])))))
