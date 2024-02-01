@@ -78,7 +78,7 @@ cfg.add(1, Adv, like)
 ```
 
 Alternatively, grammars can more easily be defined directly from strings, where non-terminals need to be capitalized or start with an '@', whereas terminals are lower case:
-```
+```python
 cfg = CFG.from_string("""
 1.0: S -> NP VP 
 0.5: N -> fruit	
